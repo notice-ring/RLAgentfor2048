@@ -18,7 +18,7 @@ def train():
     agent.qnet.train()
     agent.qnet_target.eval()
 
-    episodes = 500
+    episodes = 5000
     sync_interval = 20
     total_score_history, max_num_history = [], []
 
@@ -45,7 +45,7 @@ def train():
         total_score_history.append(total_score)
         max_num_history.append(max_num)
 
-        if episode % 100 == 0:
+        if episode % 500 == 0:
             print(f"Episode: {episode}, Total Score: {total_score}, Max Num: {max_num}")
             env.render_board()
 
@@ -86,7 +86,7 @@ def test():
             if not is_action:
                 continue
             else:
-                state, reward, done = env.step(action)
+                state, _, done = env.step(action)
 
         total_score, max_num = env.get_scores()
 
