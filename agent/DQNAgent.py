@@ -106,6 +106,7 @@ class DQNAgent:
 
     def get_action(self, state):
         epsilon_threshold = max(self.epsilon_end, self.epsilon_start * (self.epsilon_decay ** self.step))
+        self.step += 1
         if np.random.rand() < epsilon_threshold:
 
             return np.random.choice(self.action_size)
