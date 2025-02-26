@@ -92,3 +92,8 @@ def test():
 
         print(f"Total Score: {total_score}, Max Num: {max_num}")
         env.render_board()
+
+
+if __name__ == '__main__':
+    train()
+    test()
