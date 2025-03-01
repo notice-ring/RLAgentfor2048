@@ -86,7 +86,7 @@ class DQNAgent:
         self.epsilon_decay = 0.9999
         self.step = 0
         self.buffer_size = 10000
-        self.batch_size = 64
+        self.batch_size = 512
         self.action_size = 4
 
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
