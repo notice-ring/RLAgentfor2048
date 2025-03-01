@@ -114,11 +114,13 @@ class Board_2048():
         return True
 
     def step(self, action):  # return board, reward, done after action
-        self.next_state(action)
-
-        reward = self.reward(action, self.board)
-
-        done = self.is_done()
+        if self.is_action(action):
+            self.next_state(action)
+            reward = self.reward(action, self.board)
+            done = self.is_done()
+        else:
+            reward = -1
+            done = False
 
         return self.board, reward, done
 

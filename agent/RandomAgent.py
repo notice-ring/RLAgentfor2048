@@ -24,11 +24,7 @@ if __name__ == "__main__":
 
         while not done:
             action = agent.get_action(state)
-            is_action = env.is_action(action)
-            if not is_action:
-                continue
-            else:
-                state, reward, done = env.step(action)
+            state, reward, done = env.step(action)
 
         total_score, max_num = env.get_scores()
 

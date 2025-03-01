@@ -40,11 +40,11 @@ class ReplayBuffer:
 
 class ConvBlock(nn.Module):
     def __init__(self, in_channels, out_channels):
-        super().__init__()
+        super(ConvBlock, self).__init__()
         d = out_channels // 2
 
         self.conv1 = nn.Conv2d(in_channels, d, kernel_size=1, padding=0)
-        self.conv2 = nn.Conv2d(in_channels, d, kernel_size=3, padding=0)
+        self.conv2 = nn.Conv2d(in_channels, d, kernel_size=3, padding=1)
 
 
     def forward(self, x):
@@ -57,7 +57,7 @@ class ConvBlock(nn.Module):
 
 class QNet(nn.Module):
     def __init__(self, action_size):
-        super().__init__()
+        super(QNet, self).__init__()
         self.conv1 = ConvBlock(16, 2048)
         self.conv2 = ConvBlock(2048, 2048)
         self.conv3 = ConvBlock(2048, 2048)
@@ -86,7 +86,7 @@ class DQNAgent:
         self.epsilon_decay = 0.9999
         self.step = 0
         self.buffer_size = 10000
-        self.batch_size = 32
+        self.batch_size = 64
         self.action_size = 4
 
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -107,17 +107,17 @@ class DQNAgent:
     def get_action(self, state):
         epsilon_threshold = max(self.epsilon_end, self.epsilon_start * (self.epsilon_decay ** self.step))
         self.step += 1
-        
+
         if np.random.rand() < epsilon_threshold:
 
             return np.random.choice(self.action_size)
         else:
-            qs = self.qnet(self.encode_state(state))
+            qs = self.qnet(self.encode_state(state).to(self.device))
 
             return qs.max(1)[1][0].to("cpu")
 
     def get_action_exploitation(self, state):
-        qs = self.qnet(self.encode_state(state))
+        qs = self.qnet(self.encode_state(state).to(self.device))
 
         return qs.max(1)[1][0].to("cpu")
 
@@ -173,14 +173,10 @@ if __name__ == '__main__':
 
         while not done:
             action = agent.get_action(state)
-            is_action = env.is_action(action)
-            if not is_action:
-                continue
-            else:
-                next_state, reward, done = env.step(action)
+            next_state, reward, done = env.step(action)
 
-                agent.update(state, action, reward, next_state, done)
-                state = next_state
+            agent.update(state, action, reward, next_state, done)
+            state = next_state
 
         if episode % sync_interval == 0:
             agent.sync_qnet()
